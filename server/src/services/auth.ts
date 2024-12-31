@@ -37,3 +37,22 @@ export const signToken = (username: string, email: string, _id: unknown) => {
 
   return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 };
+
+export const contexmiddleware = ({ req }: { req: Request }) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+
+    const secretKey = process.env.JWT_SECRET_KEY || '';
+
+    try {
+      const user = jwt.verify(token, secretKey) as JwtPayload;
+      return { user };
+    }
+    catch (error) {
+      throw new Error('Invalid token');
+    }
+  }
+  return {};
+}
