@@ -1,7 +1,7 @@
 import User, { UserDocument } from '../models/User.js';
 import Book, { BookDocument } from '../models/Book.js';
 import {signToken} from '../services/auth.js'
-import { saveBook } from '../controllers/user-controller.js';
+import { AuthenticationError } from '../services/auth.js';
 const resolvers = {
   Query: {
     me: async (_parent: any, _args: any, context: any): Promise<UserDocument | null> => {
@@ -31,7 +31,7 @@ const resolvers = {
       const token = signToken(user.username, user.email, user._id);
       return { token, user };
     },
-    saveBook: async (_parent: any, { bookData }: { bookData: IBookInput }, context: IUserContext): Promise<IUserDocument | null> => {
+    saveBook: async (_parent: any, { bookData }: { bookData: BookDocument }, context: any): Promise<UserDocument | null> => {
       if (context.user) {
         const updatedUser = await User.findByIdAndUpdate(
           { _id: context.user._id },
